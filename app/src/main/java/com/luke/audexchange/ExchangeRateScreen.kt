@@ -14,7 +14,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
-import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 data class Stats(val latest: Double, val avg: Double, val min: Double, val max: Double) {
     fun changePercent(): Double = if (avg != 0.0) (latest - avg) / avg * 100 else 0.0
@@ -26,7 +27,7 @@ fun generateStadDataString(title: String, statsValue: Stats): AnnotatedString {
     val usdChangeColor = if (usdChange >= 0) Color(0xFF388E3C) else Color.Red
 
     return buildAnnotatedString {
-        append("%s: Now：%.4f，Avg：%.4f，Min：%.4f，Max：%.4f，".format(
+        append("%s: %.4f，Avg：%.4f，Min：%.4f，Max：%.4f，".format(
             title, statsValue.latest, statsValue.avg, statsValue.min, statsValue.max
         ))
         withStyle(style = SpanStyle(color = usdChangeColor)) {
@@ -64,10 +65,14 @@ fun displayData(rateList: List<RateData>) {
     Text(stringResource(R.string.past_30_days))
     Spacer(modifier = Modifier.height(8.dp))
 
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .border(BorderStroke(1.dp, SolidColor(Color.Gray)))  // 整体表格边框
+            .fillMaxHeight()
+            .verticalScroll(scrollState)
+            .border(BorderStroke(1.dp, Color.Gray))
             .padding(4.dp)
     ) {
         // 表头
@@ -81,7 +86,6 @@ fun displayData(rateList: List<RateData>) {
 
         Divider(color = Color.Gray)
 
-        // 每一行数据
         rateList.forEachIndexed { index, it ->
             val changeUSD = (it.AUDUSD - statsUSD.avg) / statsUSD.avg * 100
             val changeCNY = (it.AUDCNY - statsCNY.avg) / statsCNY.avg * 100
