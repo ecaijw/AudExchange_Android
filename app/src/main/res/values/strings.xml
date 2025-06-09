@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">澳元汇率</string>
+    <string name="app_name">AudExchange</string>
     <string name="title_exchange_panel">澳元汇率面板</string>
     <string name="past_30_days">过去30天汇率表格</string>
 </resources>
