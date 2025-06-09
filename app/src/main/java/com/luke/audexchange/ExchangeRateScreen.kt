@@ -7,9 +7,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+
 
 data class Stats(val latest: Double, val avg: Double, val min: Double, val max: Double) {
     fun changePercent(): Double = if (avg != 0.0) (latest - avg) / avg * 100 else 0.0
+}
+
+fun generateStadDataString(title: String, statsValue: Stats): AnnotatedString {
+    val usdChange = statsValue.changePercent()
+    val usdArrow = if (usdChange >= 0) "↑" else "↓"
+    val usdChangeColor = if (usdChange >= 0) Color(0xFF388E3C) else Color.Red
+
+    return buildAnnotatedString {
+        append("%s: Now：%.4f，Avg：%.4f，Min：%.4f，Max：%.4f，".format(
+            title, statsValue.latest, statsValue.avg, statsValue.min, statsValue.max
+        ))
+        withStyle(style = SpanStyle(color = usdChangeColor)) {
+            append("%.2f%% %s".format(usdChange, usdArrow))
+        }
+    }
+
 }
 
 @Composable
@@ -33,15 +54,8 @@ fun displayData(rateList: List<RateData>) {
         max = valuesCNY.maxOrNull() ?: 0.0
     )
 
-    Text("AUD/USD: Now：%.4f，Avg：%.4f，Min：%.4f，Max：%.4f，%.2f%% %s".format(
-        statsUSD.latest, statsUSD.avg, statsUSD.min, statsUSD.max,
-        statsUSD.changePercent(), if (statsUSD.changePercent() >= 0) "↑" else "↓"
-    ), color = if (statsUSD.changePercent() >= 0) Color(0xFF388E3C) else Color.Red)
-
-    Text("AUD/CNY: Now：%.4f，Avg：%.4f，Min：%.4f，Max：%.4f，%.2f%% %s".format(
-        statsCNY.latest, statsCNY.avg, statsCNY.min, statsCNY.max,
-        statsCNY.changePercent(), if (statsCNY.changePercent() >= 0) "↑" else "↓"
-    ), color = if (statsCNY.changePercent() >= 0) Color(0xFF388E3C) else Color.Red)
+    Text(generateStadDataString("AUD/USD", statsUSD))
+    Text(generateStadDataString("AUD/CNY", statsCNY))
 
     Spacer(modifier = Modifier.height(24.dp))
     Text(stringResource(R.string.past_30_days))
