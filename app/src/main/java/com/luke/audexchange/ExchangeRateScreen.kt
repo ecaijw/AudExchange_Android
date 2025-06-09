@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.*
+import androidx.compose.ui.res.stringResource
 
 @Composable
 fun ExchangeRateScreen() {
@@ -15,7 +16,7 @@ fun ExchangeRateScreen() {
             .padding(16.dp)
     ) {
         Text(
-            "澳元汇率面板",
+            text = stringResource(R.string.title_exchange_panel),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -24,10 +25,10 @@ fun ExchangeRateScreen() {
         Text("AUD/CNY: 4.6761  ↑ 0.78%", color = Color(0xFF388E3C))
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text("【此处可添加折线图 - 需要依赖 chart 库】", modifier = Modifier.padding(8.dp))
+        Text("Diagram Placeholder", modifier = Modifier.padding(8.dp))
 
         Spacer(modifier = Modifier.height(24.dp))
-        Text("过去30天汇率表格")
+        Text(stringResource(R.string.past_30_days))
 
         Spacer(modifier = Modifier.height(8.dp))
         Column {

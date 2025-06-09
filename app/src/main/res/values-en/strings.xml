@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AudExchange</string>
+    <string name="title_exchange_panel">AUD Exchange Rate</string>
+    <string name="past_30_days">Past 30 Days</string>
+</resources>
