@@ -11,7 +11,10 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.ui.graphics.SolidColor
 
 data class Stats(val latest: Double, val avg: Double, val min: Double, val max: Double) {
     fun changePercent(): Double = if (avg != 0.0) (latest - avg) / avg * 100 else 0.0
@@ -61,25 +64,38 @@ fun displayData(rateList: List<RateData>) {
     Text(stringResource(R.string.past_30_days))
     Spacer(modifier = Modifier.height(8.dp))
 
-    Column {
-        Row {
-            Text("Day", modifier = Modifier.weight(1f))
-            Text("AUD/USD", modifier = Modifier.weight(1f))
-            Text("Change", modifier = Modifier.weight(1f))
-            Text("AUD/CNY", modifier = Modifier.weight(1f))
-            Text("Change", modifier = Modifier.weight(1f))
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(BorderStroke(1.dp, SolidColor(Color.Gray)))  // 整体表格边框
+            .padding(4.dp)
+    ) {
+        // 表头
+        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+            Text("Date", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
+            Text("AUD/USD", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
+            Text("Change", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
+            Text("AUD/CNY", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
+            Text("Change", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
         }
 
-        rateList.forEach {
+        Divider(color = Color.Gray)
+
+        // 每一行数据
+        rateList.forEachIndexed { index, it ->
             val changeUSD = (it.AUDUSD - statsUSD.avg) / statsUSD.avg * 100
             val changeCNY = (it.AUDCNY - statsCNY.avg) / statsCNY.avg * 100
 
-            Row {
+            Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
                 Text(it.date, modifier = Modifier.weight(1f))
                 Text("%.4f".format(it.AUDUSD), modifier = Modifier.weight(1f))
                 Text("%.2f%%".format(changeUSD), modifier = Modifier.weight(1f), color = if (changeUSD >= 0) Color(0xFF388E3C) else Color.Red)
                 Text("%.4f".format(it.AUDCNY), modifier = Modifier.weight(1f))
                 Text("%.2f%%".format(changeCNY), modifier = Modifier.weight(1f), color = if (changeCNY >= 0) Color(0xFF388E3C) else Color.Red)
+            }
+
+            if (index != rateList.lastIndex) {
+                Divider(color = Color.LightGray)
             }
         }
     }
@@ -103,6 +119,8 @@ fun ExchangeRateScreen() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        Spacer(modifier = Modifier.height(24.dp))
+        // display the title
         Text(
             text = stringResource(R.string.title_exchange_panel),
             style = MaterialTheme.typography.headlineMedium,
